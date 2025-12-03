@@ -32,13 +32,16 @@
 
     <hr>
     <h5>請勾選可上班日期與時間：</h5>
+    <div class="alert alert-info py-2" style="font-size: 0.9rem;">
+        <small>💡 預設時間：平日 13:00~23:00 / 假日 09:00~23:00 (可自行修改)</small>
+    </div>
     <div id="schedule-container">
         </div>
 
     <hr class="mt-4">
     <div class="mb-4">
         <label for="remarks" class="form-label fw-bold">📝 備註事項 (選填)</label>
-        <textarea class="form-control" id="remarks" rows="3" placeholder="例如：我想盡量連續上一整天、一週最多排 3 天班、希望不要排早班...等"></textarea>
+        <textarea class="form-control" id="remarks" rows="3" placeholder="例如：我想盡量連續上一整天、一週最多排 3 天班...等"></textarea>
     </div>
 
     <div class="d-grid gap-2">
@@ -56,6 +59,7 @@
     import { getFirestore, collection, addDoc, serverTimestamp } 
     from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+    // ★★★ 請保留原本正確的 Firebase Config 設定 ★★★
     const firebaseConfig = {
       apiKey: "AIzaSyBXyBEURDETH9tVc5F4HGG6KmwSpYGOFb4",
       authDomain: "winter-aab3a.firebaseapp.com",
@@ -96,6 +100,12 @@
         // 判斷是否為過年期間
         const isCNY = (currentDate >= cnyStart && currentDate <= cnyEnd);
         
+        // 設定預設時間邏輯
+        // 如果是假日(週六日) -> 09:00 起始
+        // 如果是平日(週一至五) -> 13:00 起始
+        let defaultStartTime = isWeekend ? "09:00" : "13:00";
+        let defaultEndTime = "23:00";
+
         const rowClass = isCNY ? 'holiday-row' : '';
         const disabledAttr = isCNY ? 'disabled' : '';
         const labelExtra = isCNY ? '<span class="badge bg-danger ms-2">🧧 過年公休</span>' : '';
@@ -117,9 +127,9 @@
                                    onchange="toggleInputs(this)" 
                                    ${disabledAttr}>
                         </div>
-                        <input type="time" class="form-control start-time" value="09:00" disabled>
+                        <input type="time" class="form-control start-time" value="${defaultStartTime}" disabled>
                         <span class="input-group-text">至</span>
-                        <input type="time" class="form-control end-time" value="18:00" disabled>
+                        <input type="time" class="form-control end-time" value="${defaultEndTime}" disabled>
                         <input type="hidden" class="date-val" value="${dateStr}">
                     </div>
                 </div>
@@ -139,7 +149,6 @@
     // 3. 送出資料到 Firebase
     window.submitData = async function() {
         const name = document.getElementById('username').value.trim();
-        // 抓取備註內容
         const remarks = document.getElementById('remarks').value.trim();
 
         if (!name) {
@@ -171,11 +180,11 @@
             await addDoc(collection(db, "schedules"), {
                 name: name,
                 availability: availability,
-                remarks: remarks, // 將備註欄位一併上傳
+                remarks: remarks,
                 submittedAt: serverTimestamp()
             });
             
-            alert('✅ 感謝！你的班表 (含備註) 已成功送出。');
+            alert('✅ 感謝！你的班表已成功送出。');
             location.reload(); 
         } catch (e) {
             console.error("Error adding document: ", e);
