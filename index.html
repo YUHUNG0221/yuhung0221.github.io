@@ -50,7 +50,7 @@
     <hr class="mt-4">
     <div class="mb-4">
         <label for="remarks" class="form-label fw-bold">📝 備註 (選填)</label>
-        <textarea class="form-control" id="remarks" rows="3" placeholder="例如：希望連上、每週最多幾天..."></textarea>
+        <textarea class="form-control" id="remarks" rows="3" placeholder="例如：希望連上早午晚班、盡量排整天、或是只想上晚班..."></textarea>
     </div>
 
     <div class="d-grid gap-2 mb-4">
@@ -87,18 +87,14 @@
     // -----------------------------------------------------------
     function generateTimeOptions(selectedValue) {
         let optionsHtml = '';
-        // 設定選單從 08:00 到 24:00 (你可以自己改 i 的範圍)
         for (let i = 8; i <= 24; i++) {
-            // 整點
             let hour = i < 10 ? `0${i}` : i;
             let timeStr = `${hour}:00`;
-            // 如果 user 系統時間超過 24:00 把它轉成 00:00 (視需求)
             if (i === 24) timeStr = "00:00 (隔日)"; 
             
             let selected = (timeStr.startsWith(selectedValue)) ? 'selected' : '';
             optionsHtml += `<option value="${timeStr}" ${selected}>${timeStr}</option>`;
             
-            // 半點 (如果不需要半點，把下面這幾行刪掉)
             if (i !== 24) {
                 let halfTimeStr = `${hour}:30`;
                 let halfSelected = (halfTimeStr === selectedValue) ? 'selected' : '';
@@ -140,7 +136,6 @@
         const labelExtra = isCNY ? '<span class="badge bg-danger ms-2">過年公休</span>' : '';
         const labelClass = isCNY ? 'holiday-label' : (isWeekend ? 'weekend' : '');
 
-        // 產生下拉選單 HTML
         const startOptions = generateTimeOptions(defaultStartTime);
         const endOptions = generateTimeOptions(defaultEndTime);
 
@@ -180,7 +175,6 @@
 
     window.toggleInputs = function(checkbox) {
         const parent = checkbox.closest('.row');
-        // 這裡改抓 select 元素
         const selects = parent.querySelectorAll('select');
         selects.forEach(select => select.disabled = !checkbox.checked);
         
@@ -212,7 +206,6 @@
             if (checkbox.checked && !checkbox.disabled) {
                 availability.push({
                     date: row.querySelector('.date-val').value,
-                    // 這裡改抓 select 的 value
                     startTime: row.querySelector('.start-time').value,
                     endTime: row.querySelector('.end-time').value
                 });
