@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 春節排班意願表</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { padding: 20px; background-color: #f8f9fa; }
+        .container { max-width: 800px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .date-row { border-bottom: 1px solid #eee; padding: 10px 0; align-items: center; }
+        .date-label { font-weight: bold; color: #333; }
+        .weekend { color: #d9534f; } /* 週末顯示紅色 */
+        
+        /* 過年期間的樣式 */
+        .holiday-row { background-color: #f2f2f2; color: #999; }
+        .holiday-label { opacity: 0.6; }
+        
+        .loading { display: none; text-align: center; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2 class="text-center mb-4">📅 2026 排班意願調查</h2>
+    <p class="text-muted text-center">日期範圍：2026/1/19 ~ 2026/2/22</p>
+
+    <div class="mb-3">
+        <label for="username" class="form-label">請輸入你的姓名：</label>
+        <input type="text" class="form-control" id="username" placeholder="王小明" required>
+    </div>
+
+    <hr>
+    <h5>請勾選可上班日期與時間：</h5>
+    <div id="schedule-container">
+        </div>
+
+    <hr class="mt-4">
+    <div class="mb-4">
+        <label for="remarks" class="form-label fw-bold">📝 備註事項 (選填)</label>
+        <textarea class="form-control" id="remarks" rows="3" placeholder="例如：我想盡量連續上一整天、一週最多排 3 天班、希望不要排早班...等"></textarea>
+    </div>
+
+    <div class="d-grid gap-2">
+        <button class="btn btn-primary btn-lg" onclick="submitData()">確認送出</button>
+    </div>
+    
+    <div id="loading" class="loading">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p>資料傳送中...</p>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } 
+    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBXyBEURDETH9tVc5F4HGG6KmwSpYGOFb4",
+      authDomain: "winter-aab3a.firebaseapp.com",
+      projectId: "winter-aab3a",
+      storageBucket: "winter-aab3a.firebasestorage.app",
+      messagingSenderId: "46516471666",
+      appId: "1:46516471666:web:113f81a88048b0bd1a7feb",
+      measurementId: "G-V4QQHXR218"
+    };
+
+    // 初始化 Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // -----------------------------------------------------------
+    // 程式邏輯區
+    // -----------------------------------------------------------
+    
+    const container = document.getElementById('schedule-container');
+    const startDate = new Date('2026-01-19');
+    const endDate = new Date('2026-02-22');
+    
+    // 定義過年區間
+    const cnyStart = new Date('2026-02-11');
+    const cnyEnd = new Date('2026-02-20');
+
+    const weekDays = ['日','一','二','三','四','五','六'];
+
+    // 1. 自動產生日期列表
+    let currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+        const dateStr = currentDate.toISOString().split('T')[0]; // YYYY-MM-DD
+        const month = currentDate.getMonth() + 1;
+        const day = currentDate.getDate();
+        const weekDay = currentDate.getDay();
+        const isWeekend = (weekDay === 0 || weekDay === 6);
+
+        // 判斷是否為過年期間
+        const isCNY = (currentDate >= cnyStart && currentDate <= cnyEnd);
+        
+        const rowClass = isCNY ? 'holiday-row' : '';
+        const disabledAttr = isCNY ? 'disabled' : '';
+        const labelExtra = isCNY ? '<span class="badge bg-danger ms-2">🧧 過年公休</span>' : '';
+        const labelClass = isCNY ? 'holiday-label' : (isWeekend ? 'weekend' : '');
+
+        const rowHtml = `
+            <div class="row date-row ${rowClass}">
+                <div class="col-md-3 col-4">
+                    <span class="date-label ${labelClass}">
+                        ${month}/${day} (${weekDays[weekDay]})
+                    </span>
+                    ${labelExtra}
+                </div>
+                <div class="col-md-9 col-8">
+                    <div class="input-group">
+                        <div class="input-group-text">
+                            <input class="form-check-input mt-0 is-available" 
+                                   type="checkbox" 
+                                   onchange="toggleInputs(this)" 
+                                   ${disabledAttr}>
+                        </div>
+                        <input type="time" class="form-control start-time" value="09:00" disabled>
+                        <span class="input-group-text">至</span>
+                        <input type="time" class="form-control end-time" value="18:00" disabled>
+                        <input type="hidden" class="date-val" value="${dateStr}">
+                    </div>
+                </div>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', rowHtml);
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    // 2. 切換時間輸入框的啟用狀態
+    window.toggleInputs = function(checkbox) {
+        const parent = checkbox.closest('.row');
+        const inputs = parent.querySelectorAll('input[type="time"]');
+        inputs.forEach(input => input.disabled = !checkbox.checked);
+    }
+
+    // 3. 送出資料到 Firebase
+    window.submitData = async function() {
+        const name = document.getElementById('username').value.trim();
+        // 抓取備註內容
+        const remarks = document.getElementById('remarks').value.trim();
+
+        if (!name) {
+            alert('拜託寫一下名字啦！');
+            return;
+        }
+
+        const availability = [];
+        const rows = document.querySelectorAll('.date-row');
+        
+        rows.forEach(row => {
+            const checkbox = row.querySelector('.is-available');
+            if (checkbox.checked && !checkbox.disabled) {
+                availability.push({
+                    date: row.querySelector('.date-val').value,
+                    startTime: row.querySelector('.start-time').value,
+                    endTime: row.querySelector('.end-time').value
+                });
+            }
+        });
+
+        if (availability.length === 0) {
+            if(!confirm('你一天都沒有勾選喔？確定要送出空白班表嗎？')) return;
+        }
+
+        document.getElementById('loading').style.display = 'block';
+
+        try {
+            await addDoc(collection(db, "schedules"), {
+                name: name,
+                availability: availability,
+                remarks: remarks, // 將備註欄位一併上傳
+                submittedAt: serverTimestamp()
+            });
+            
+            alert('✅ 感謝！你的班表 (含備註) 已成功送出。');
+            location.reload(); 
+        } catch (e) {
+            console.error("Error adding document: ", e);
+            alert('❌ 發生錯誤，請截圖給開發者：' + e.message);
+        } finally {
+            document.getElementById('loading').style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>
