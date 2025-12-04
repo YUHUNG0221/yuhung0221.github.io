@@ -5,61 +5,120 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2026 寒假排班意願表</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    
     <style>
-        body { padding: 20px; background-color: #f8f9fa; }
-        .container { max-width: 800px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        
-        .date-row { border-bottom: 1px solid #f0f0f0; padding: 12px 0; }
-        .date-label { font-weight: bold; color: #333; font-size: 1.05rem; }
-        .weekend { color: #d9534f; } 
-        
-        .holiday-row { background-color: #f9f9f9; }
-        .holiday-label { opacity: 0.5; }
-        
-        /* 放大勾選框 */
-        .form-check-input { width: 1.3em; height: 1.3em; margin-top: 0.2em; cursor: pointer; }
-        
-        /* 調整下拉選單樣式 */
-        .form-select { cursor: pointer; }
+        :root {
+            --primary-color: #4a90e2;
+            --bg-color: #f0f2f5;
+            --card-radius: 16px;
+            
+            /* --- 🎨 配色系統 --- */
+            /* 1. 過年 (CNY) - 喜氣紅金配色 */
+            --cny-bg-light: #fffcf5; 
+            --cny-border: #ff4b2b;   
+            --cny-text: #c0392b;     
+            --cny-gradient: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
 
-        .loading { display: none; text-align: center; margin-top: 20px; }
+            /* 2. 週末 (Weekend) - 放鬆櫻花粉 */
+            --wk-bg-light: #fffbfb;
+            --wk-border: #e056fd;
+            --wk-text: #b33771;
+        }
+
+        body { 
+            padding: 20px; 
+            background-color: var(--bg-color); 
+            font-family: 'Noto Sans TC', sans-serif; 
+            color: #444;
+        }
+
+        .container { max-width: 800px; padding: 0; }
+
+        /* --- 📝 填寫表單區 --- */
+        .form-card { 
+            background: white; 
+            padding: 30px; 
+            border-radius: var(--card-radius); 
+            box-shadow: 0 8px 30px rgba(0,0,0,0.05); 
+        }
+
+        .date-row { 
+            background: white; border: 1px solid #eee; border-radius: 12px; padding: 18px 20px; 
+            margin-bottom: 15px; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            position: relative; overflow: hidden;
+        }
+        .date-row:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+
+        /* 假日樣式 */
+        .row-weekend { 
+            background-color: #fff8fc; 
+            border-left: 5px solid var(--wk-border); 
+        }
+        .row-weekend .date-label { color: var(--wk-text); }
+
+        /* 過年樣式 - 強調 */
+        .row-cny { 
+            background-color: var(--cny-bg-light) !important; 
+            border: 2px solid var(--cny-border); 
+            box-shadow: 0 4px 12px rgba(255, 75, 43, 0.15);
+        }
+        .row-cny .date-label { 
+            color: var(--cny-text); font-weight: 800; font-size: 1.15rem; 
+            display: flex; align-items: center; gap: 5px;
+        }
+        .cny-badge { 
+            background: var(--cny-gradient); color: white; padding: 2px 8px; 
+            border-radius: 4px; font-size: 0.8rem; box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
+        }
+
+        .form-check-input { width: 1.5em; height: 1.5em; margin-top: 0.1em; cursor: pointer; border-color: #ccc;}
+        .form-check-input:checked { background-color: var(--primary-color); border-color: var(--primary-color); }
+        .form-select { border-radius: 8px; border: 1px solid #e0e0e0; padding: 8px 12px; cursor: pointer; }
+        
+        .loading { display: none; text-align: center; margin-top: 20px; color: #888; }
+        .btn-primary { 
+            background-color: var(--primary-color); border: none; padding: 12px 20px; 
+            box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3); transition: 0.2s; 
+        }
+        .btn-primary:hover { background-color: #357abd; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(74, 144, 226, 0.4); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h3 class="text-center mb-2">⛄ 2026 寒假排班意願表</h3>
-    <p class="text-muted text-center small">2026/1/19 ~ 2026/2/22</p>
-
-    <div class="mb-3">
-        <label for="username" class="form-label fw-bold">你的姓名：</label>
-        <input type="text" class="form-control" id="username" placeholder="請輸入本名" required>
-    </div>
-
-    <div class="alert alert-info py-2 mb-3" style="font-size: 0.85rem;">
-        <strong>💡 預設時間：</strong><br>
-        平日 13:00~23:00 / 假日 09:00~23:00
-    </div>
-
-    <hr>
-    <h6 class="mb-3">請勾選可上班日期：</h6>
-    
-    <div id="schedule-container">
+    <div class="form-card">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold" style="color: #333;">⛄ 2026 寒假排班意願表</h2>
+            <p class="text-muted">調查期間：2026/1/19 ~ 2026/2/22</p>
         </div>
 
-    <hr class="mt-4">
-    <div class="mb-4">
-        <label for="remarks" class="form-label fw-bold">📝 備註 (選填)</label>
-        <textarea class="form-control" id="remarks" rows="3" placeholder="例如：希望連上早午晚班、盡量排整天、或是只想上晚班..."></textarea>
-    </div>
-
-    <div class="d-grid gap-2 mb-4">
-        <button class="btn btn-primary btn-lg" onclick="submitData()">確認送出</button>
-    </div>
-    
-    <div id="loading" class="loading">
-        <div class="spinner-border text-primary" role="status"></div>
-        <p>資料傳送中...</p>
+        <div class="mb-4">
+            <label class="form-label fw-bold">你的姓名</label>
+            <input type="text" class="form-control form-control-lg bg-light border-0" id="username" placeholder="請輸入本名 (例如: 王小明)" required>
+        </div>
+        
+        <div class="d-flex align-items-center gap-2 mb-4 p-3 bg-light rounded-3 text-secondary">
+            <span style="font-size: 1.2rem;">💡</span>
+            <small>預設時間：平日 13:00~23:00 / 假日 09:00~23:00 (可手動調整)</small>
+        </div>
+        
+        <div id="schedule-container"></div>
+        
+        <hr class="my-5 text-muted opacity-25">
+        
+        <div class="mb-4">
+            <label class="form-label fw-bold">📝 備註 (選填)</label>
+            <textarea class="form-control bg-light border-0" id="remarks" rows="3" placeholder="例如：希望連上早午晚班、盡量排整天、或是只想上晚班..."></textarea>
+        </div>
+        <div class="d-grid gap-2 mb-2">
+            <button class="btn btn-primary btn-lg rounded-pill fw-bold" onclick="submitData()">確認送出班表</button>
+        </div>
+        
+        <div id="loading" class="loading">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 small">資料上傳中...</p>
+        </div>
     </div>
 </div>
 
@@ -68,7 +127,9 @@
     import { getFirestore, collection, addDoc, serverTimestamp } 
     from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // ★★★ 請保留原本正確的 Firebase Config 設定 ★★★
+    // -----------------------------------------------------------
+    // ★★★ 請記得換回你的 Firebase Config ★★★
+    // -----------------------------------------------------------
     const firebaseConfig = {
       apiKey: "AIzaSyBXyBEURDETH9tVc5F4HGG6KmwSpYGOFb4",
       authDomain: "winter-aab3a.firebaseapp.com",
@@ -82,128 +143,93 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // -----------------------------------------------------------
-    // 產生時間選項的函式 (08:00 ~ 24:00, 每30分鐘一格)
-    // -----------------------------------------------------------
-    function generateTimeOptions(selectedValue) {
-        let optionsHtml = '';
-        for (let i = 8; i <= 24; i++) {
-            let hour = i < 10 ? `0${i}` : i;
-            let timeStr = `${hour}:00`;
-            if (i === 24) timeStr = "00:00 (隔日)"; 
-            
-            let selected = (timeStr.startsWith(selectedValue)) ? 'selected' : '';
-            optionsHtml += `<option value="${timeStr}" ${selected}>${timeStr}</option>`;
-            
-            if (i !== 24) {
-                let halfTimeStr = `${hour}:30`;
-                let halfSelected = (halfTimeStr === selectedValue) ? 'selected' : '';
-                optionsHtml += `<option value="${halfTimeStr}" ${halfSelected}>${halfTimeStr}</option>`;
-            }
-        }
-        return optionsHtml;
-    }
-
-    // -----------------------------------------------------------
-    // 程式邏輯區
-    // -----------------------------------------------------------
-    
-    const container = document.getElementById('schedule-container');
     const startDate = new Date('2026-01-19');
     const endDate = new Date('2026-02-22');
-    
     const cnyStart = new Date('2026-02-11');
     const cnyEnd = new Date('2026-02-20');
-    const weekDays = ['日','一','二','三','四','五','六'];
 
-    let currentDate = new Date(startDate);
-    while (currentDate <= endDate) {
-        const dateStr = currentDate.toISOString().split('T')[0];
-        const month = currentDate.getMonth() + 1;
-        const day = currentDate.getDate();
-        const weekDay = currentDate.getDay();
-        const isWeekend = (weekDay === 0 || weekDay === 6);
-
-        // 過年判斷
-        const isCNY = (currentDate >= cnyStart && currentDate <= cnyEnd);
+    // 初始化表單
+    function initForm() {
+        const container = document.getElementById('schedule-container');
+        let currentDate = new Date(startDate);
         
-        // 預設時間
-        let defaultStartTime = isWeekend ? "09:00" : "13:00";
-        let defaultEndTime = "23:00";
+        while (currentDate <= endDate) {
+            const dateStr = currentDate.toISOString().split('T')[0];
+            const month = currentDate.getMonth() + 1;
+            const day = currentDate.getDate();
+            const weekDay = currentDate.getDay(); 
+            const weekDaysStr = ['日','一','二','三','四','五','六'];
+            
+            const isWeekend = (weekDay === 0 || weekDay === 6);
+            const isCNY = (currentDate >= cnyStart && currentDate <= cnyEnd);
+            
+            let defaultStartTime = isWeekend ? "09:00" : "13:00";
+            let defaultEndTime = "23:00";
+            const disabledAttr = isCNY ? 'disabled' : '';
+            
+            let rowClass = '';
+            let labelExtra = '';
+            if (isCNY) {
+                rowClass = 'row-cny'; 
+                labelExtra = '<span class="cny-badge">🧧 過年公休</span>';
+            } else if (isWeekend) {
+                rowClass = 'row-weekend';
+                labelExtra = '<span class="badge text-secondary border ms-2">假日</span>';
+            }
 
-        const rowClass = isCNY ? 'holiday-row' : '';
-        const disabledAttr = isCNY ? 'disabled' : '';
-        const labelExtra = isCNY ? '<span class="badge bg-danger ms-2">過年公休</span>' : '';
-        const labelClass = isCNY ? 'holiday-label' : (isWeekend ? 'weekend' : '');
+            const startOptions = generateTimeOptions(defaultStartTime);
+            const endOptions = generateTimeOptions(defaultEndTime);
 
-        const startOptions = generateTimeOptions(defaultStartTime);
-        const endOptions = generateTimeOptions(defaultEndTime);
-
-        const rowHtml = `
-            <div class="row date-row align-items-center ${rowClass}">
-                <div class="col-12 col-md-4 d-flex align-items-center mb-2 mb-md-0">
-                    <div class="form-check mb-0">
-                        <input class="form-check-input is-available" 
-                               type="checkbox" 
-                               onchange="toggleInputs(this)" 
-                               ${disabledAttr} 
-                               id="chk-${dateStr}">
-                        <label class="form-check-label ms-2 date-label ${labelClass}" for="chk-${dateStr}">
-                            ${month}/${day} (${weekDays[weekDay]})
-                        </label>
+            const rowHtml = `
+                <div class="row date-row align-items-center ${rowClass}">
+                    <div class="col-12 col-md-4 d-flex align-items-center mb-2 mb-md-0">
+                        <div class="form-check mb-0">
+                            <input class="form-check-input is-available" type="checkbox" onchange="toggleInputs(this)" ${disabledAttr} id="chk-${dateStr}">
+                            <label class="form-check-label ms-2 date-label" for="chk-${dateStr}">${month}/${day} (${weekDaysStr[weekDay]})</label>
+                        </div>
+                        ${labelExtra}
                     </div>
-                    ${labelExtra}
-                </div>
-
-                <div class="col-12 col-md-8">
-                    <div class="d-flex align-items-center gap-2">
-                        <select class="form-select start-time" disabled>
-                            ${startOptions}
-                        </select>
-                        <span class="text-muted">~</span>
-                        <select class="form-select end-time" disabled>
-                            ${endOptions}
-                        </select>
-                        <input type="hidden" class="date-val" value="${dateStr}">
+                    <div class="col-12 col-md-8">
+                        <div class="d-flex align-items-center gap-2">
+                            <select class="form-select start-time" disabled>${startOptions}</select>
+                            <span class="text-muted">~</span>
+                            <select class="form-select end-time" disabled>${endOptions}</select>
+                            <input type="hidden" class="date-val" value="${dateStr}">
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
-        container.insertAdjacentHTML('beforeend', rowHtml);
-        currentDate.setDate(currentDate.getDate() + 1);
+            `;
+            container.insertAdjacentHTML('beforeend', rowHtml);
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
     }
 
-    window.toggleInputs = function(checkbox) {
-        const parent = checkbox.closest('.row');
-        const selects = parent.querySelectorAll('select');
-        selects.forEach(select => select.disabled = !checkbox.checked);
-        
-        if(checkbox.checked) {
-            parent.style.backgroundColor = "#f0f8ff"; 
-        } else {
-            if(parent.classList.contains('holiday-row')) {
-                parent.style.backgroundColor = "#f9f9f9";
-            } else {
-                parent.style.backgroundColor = "transparent";
-            }
+    function generateTimeOptions(sel) {
+        let h = '';
+        for (let i = 8; i <= 24; i++) {
+            let hr = i < 10 ? `0${i}` : i;
+            let t = `${hr}:00`; if (i===24) t="00:00 (隔日)";
+            h += `<option value="${t}" ${t.startsWith(sel)?'selected':''}>${t}</option>`;
+            if (i!==24) { let ht=`${hr}:30`; h+=`<option value="${ht}" ${ht===sel?'selected':''}>${ht}</option>`; }
         }
+        return h;
+    }
+
+    window.toggleInputs = function(chk) {
+        const p = chk.closest('.row');
+        p.querySelectorAll('select').forEach(s => s.disabled = !chk.checked);
     }
 
     window.submitData = async function() {
         const name = document.getElementById('username').value.trim();
         const remarks = document.getElementById('remarks').value.trim();
-
-        if (!name) {
-            alert('請填寫姓名！');
-            return;
-        }
-
-        const availability = [];
-        const rows = document.querySelectorAll('.date-row');
         
-        rows.forEach(row => {
-            const checkbox = row.querySelector('.is-available');
-            if (checkbox.checked && !checkbox.disabled) {
+        if (!name) { alert('請填寫姓名！'); return; }
+        
+        const availability = [];
+        document.querySelectorAll('.date-row').forEach(row => {
+            const chk = row.querySelector('.is-available');
+            if (chk.checked && !chk.disabled) {
                 availability.push({
                     date: row.querySelector('.date-val').value,
                     startTime: row.querySelector('.start-time').value,
@@ -216,25 +242,28 @@
             if(!confirm('目前未勾選任何日期，確定要送出空白班表嗎？')) return;
         }
 
-        document.getElementById('loading').style.display = 'block';
+        const load = document.getElementById('loading');
+        load.style.display = 'block';
 
         try {
-            await addDoc(collection(db, "schedules"), {
-                name: name,
-                availability: availability,
-                remarks: remarks,
-                submittedAt: serverTimestamp()
+            await addDoc(collection(db, "schedules"), { 
+                name: name, 
+                availability: availability, 
+                remarks: remarks, 
+                submittedAt: serverTimestamp() 
             });
-            
-            alert('✅ 送出成功！');
+            alert('✅ 送出成功！感謝你的填寫。');
             location.reload(); 
-        } catch (e) {
-            console.error("Error", e);
-            alert('❌ 錯誤：' + e.message);
-        } finally {
-            document.getElementById('loading').style.display = 'none';
+        } catch (e) { 
+            console.error(e); 
+            alert('❌ 發生錯誤，請稍後再試：' + e.message); 
+        } finally { 
+            load.style.display = 'none'; 
         }
     }
+
+    // 啟動程式
+    initForm();
 </script>
 
 </body>
