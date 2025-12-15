@@ -1,186 +1,291 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>2026 寒假排班意願表</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
-    
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
-        :root {
-            --primary-color: #4a90e2;
-            --bg-color: #f0f2f5;
-            --card-radius: 16px;
-            
-            /* --- 🎨 配色系統 --- */
-            /* 1. 過年 (CNY) - 喜氣紅金配色 */
-            --cny-bg-light: #fffcf5; 
-            --cny-border: #ff4b2b;   
-            --cny-text: #c0392b;     
-            --cny-gradient: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+      :root {
+        --primary-color: #4a90e2;
+        --bg-color: #f0f2f5;
+        --card-radius: 16px;
 
-            /* 2. 週末 (Weekend) - 放鬆櫻花粉 */
-            --wk-bg-light: #fffbfb;
-            --wk-border: #e056fd;
-            --wk-text: #b33771;
-        }
+        /* --- 🎨 配色系統 --- */
+        /* 1. 過年 (CNY) - 喜氣紅金配色 */
+        --cny-bg-light: #fffcf5;
+        --cny-border: #ff4b2b;
+        --cny-text: #c0392b;
+        --cny-gradient: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
 
-        body { 
-            padding: 20px; 
-            background-color: var(--bg-color); 
-            font-family: 'Noto Sans TC', sans-serif; 
-            color: #444;
-        }
+        /* 2. 週末 (Weekend) - 放鬆櫻花粉 */
+        --wk-bg-light: #fffbfb;
+        --wk-border: #e056fd;
+        --wk-text: #b33771;
+      }
 
-        .container { max-width: 800px; padding: 0; }
+      body {
+        padding: 20px;
+        background-color: var(--bg-color);
+        font-family: "Noto Sans TC", sans-serif;
+        color: #444;
+      }
 
-        /* --- 📝 填寫表單區 --- */
-        .form-card { 
-            background: white; 
-            padding: 30px; 
-            border-radius: var(--card-radius); 
-            box-shadow: 0 8px 30px rgba(0,0,0,0.05); 
-        }
+      .container {
+        max-width: 800px;
+        padding: 0;
+      }
 
-        .date-row { 
-            background: white; border: 1px solid #eee; border-radius: 12px; padding: 18px 20px; 
-            margin-bottom: 15px; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-            position: relative; overflow: hidden;
-        }
-        .date-row:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+      /* --- 📝 填寫表單區 --- */
+      .form-card {
+        background: white;
+        padding: 30px;
+        border-radius: var(--card-radius);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+      }
 
-        /* 假日樣式 */
-        .row-weekend { 
-            background-color: #fff8fc; 
-            border-left: 5px solid var(--wk-border); 
-        }
-        .row-weekend .date-label { color: var(--wk-text); }
+      .date-row {
+        background: white;
+        border: 1px solid #eee;
+        border-radius: 12px;
+        padding: 18px 20px;
+        margin-bottom: 15px;
+        transition: all 0.2s;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+        position: relative;
+        overflow: hidden;
+      }
+      .date-row:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      }
 
-        /* 過年樣式 - 強調 */
-        .row-cny { 
-            background-color: var(--cny-bg-light) !important; 
-            border: 2px solid var(--cny-border); 
-            box-shadow: 0 4px 12px rgba(255, 75, 43, 0.15);
-        }
-        .row-cny .date-label { 
-            color: var(--cny-text); font-weight: 800; font-size: 1.15rem; 
-            display: flex; align-items: center; gap: 5px;
-        }
-        .cny-badge { 
-            background: var(--cny-gradient); color: white; padding: 2px 8px; 
-            border-radius: 4px; font-size: 0.8rem; box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
-        }
+      /* 假日樣式 */
+      .row-weekend {
+        background-color: #fff8fc;
+        border-left: 5px solid var(--wk-border);
+      }
+      .row-weekend .date-label {
+        color: var(--wk-text);
+      }
 
-        .form-check-input { width: 1.5em; height: 1.5em; margin-top: 0.1em; cursor: pointer; border-color: #ccc;}
-        .form-check-input:checked { background-color: var(--primary-color); border-color: var(--primary-color); }
-        .form-select { border-radius: 8px; border: 1px solid #e0e0e0; padding: 8px 12px; cursor: pointer; }
-        
-        .loading { display: none; text-align: center; margin-top: 20px; color: #888; }
-        .btn-primary { 
-            background-color: var(--primary-color); border: none; padding: 12px 20px; 
-            box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3); transition: 0.2s; 
-        }
-        .btn-primary:hover { background-color: #357abd; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(74, 144, 226, 0.4); }
+      /* 過年樣式 - 強調 */
+      .row-cny {
+        background-color: var(--cny-bg-light) !important;
+        border: 2px solid var(--cny-border);
+        box-shadow: 0 4px 12px rgba(255, 75, 43, 0.15);
+      }
+      .row-cny .date-label {
+        color: var(--cny-text);
+        font-weight: 800;
+        font-size: 1.15rem;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .cny-badge {
+        background: var(--cny-gradient);
+        color: white;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .form-check-input {
+        width: 1.5em;
+        height: 1.5em;
+        margin-top: 0.1em;
+        cursor: pointer;
+        border-color: #ccc;
+      }
+      .form-check-input:checked {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+      }
+      .form-select {
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+
+      .loading {
+        display: none;
+        text-align: center;
+        margin-top: 20px;
+        color: #888;
+      }
+      .btn-primary {
+        background-color: var(--primary-color);
+        border: none;
+        padding: 12px 20px;
+        box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
+        transition: 0.2s;
+      }
+      .btn-primary:hover {
+        background-color: #357abd;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(74, 144, 226, 0.4);
+      }
     </style>
-</head>
-<body>
-
-<div class="container">
-    <div class="form-card">
+  </head>
+  <body>
+    <div class="container">
+      <div class="form-card">
         <div class="text-center mb-4">
-            <h2 class="fw-bold" style="color: #333;">⛄ 2026 寒假排班意願表</h2>
-            <p class="text-muted">調查期間：2026/1/19 ~ 2026/2/22</p>
+          <h2 class="fw-bold" style="color: #333">⛄ 2026 寒假排班意願表</h2>
+          <p class="text-muted">調查期間：2026/1/19 ~ 2026/2/22</p>
         </div>
 
         <div class="mb-4">
-            <label class="form-label fw-bold">你的姓名</label>
-            <input type="text" class="form-control form-control-lg bg-light border-0" id="username" placeholder="請輸入本名 (例如: 王小明)" required>
+          <label class="form-label fw-bold">你的姓名</label>
+          <input
+            type="text"
+            class="form-control form-control-lg bg-light border-0"
+            id="username"
+            placeholder="請輸入本名 (例如: 王小明)"
+            required
+          />
         </div>
-        
-        <div class="d-flex align-items-center gap-2 mb-4 p-3 bg-light rounded-3 text-secondary">
-            <span style="font-size: 1.2rem;">💡</span>
-            <small>預設時間：平日 13:00~23:00 / 假日 09:00~23:00 (可手動調整)</small>
+
+        <div
+          class="d-flex align-items-center gap-2 mb-4 p-3 bg-light rounded-3 text-secondary"
+        >
+          <span style="font-size: 1.2rem">💡</span>
+          <small
+            >預設時間：平日 13:00~23:00 / 假日 09:00~23:00 (可手動調整)</small
+          >
         </div>
-        
+
         <div id="schedule-container"></div>
-        
-        <hr class="my-5 text-muted opacity-25">
-        
+
+        <hr class="my-5 text-muted opacity-25" />
+
         <div class="mb-4">
-            <label class="form-label fw-bold">📝 備註 (選填)</label>
-            <textarea class="form-control bg-light border-0" id="remarks" rows="3" placeholder="例如：希望連上早午晚班、盡量排整天、或是只想上晚班..."></textarea>
+          <label class="form-label fw-bold">📝 備註 (選填)</label>
+          <textarea
+            class="form-control bg-light border-0"
+            id="remarks"
+            rows="3"
+            placeholder="例如：希望連上早午晚班、盡量排整天、或是只想上晚班..."
+          ></textarea>
         </div>
         <div class="d-grid gap-2 mb-2">
-            <button class="btn btn-primary btn-lg rounded-pill fw-bold" onclick="submitData()">確認送出班表</button>
+          <button
+            class="btn btn-primary btn-lg rounded-pill fw-bold"
+            onclick="submitData()"
+          >
+            確認送出班表
+          </button>
         </div>
-        
+
         <div id="loading" class="loading">
-            <div class="spinner-border text-primary" role="status"></div>
-            <p class="mt-2 small">資料上傳中...</p>
+          <div class="spinner-border text-primary" role="status"></div>
+          <p class="mt-2 small">資料上傳中...</p>
         </div>
+      </div>
     </div>
-</div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } 
-    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        addDoc,
+        serverTimestamp,
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // -----------------------------------------------------------
-    // ★★★ 請記得換回你的 Firebase Config ★★★
-    // -----------------------------------------------------------
-    const firebaseConfig = {
-      apiKey: "AIzaSyBXyBEURDETH9tVc5F4HGG6KmwSpYGOFb4",
-      authDomain: "winter-aab3a.firebaseapp.com",
-      projectId: "winter-aab3a",
-      storageBucket: "winter-aab3a.firebasestorage.app",
-      messagingSenderId: "46516471666",
-      appId: "1:46516471666:web:113f81a88048b0bd1a7feb",
-      measurementId: "G-V4QQHXR218"
-    };
+      // -----------------------------------------------------------
+      // ★★★ 請記得換回你的 Firebase Config ★★★
+      // -----------------------------------------------------------
+      const firebaseConfig = {
+        apiKey: "AIzaSyBXyBEURDETH9tVc5F4HGG6KmwSpYGOFb4",
+        authDomain: "winter-aab3a.firebaseapp.com",
+        projectId: "winter-aab3a",
+        storageBucket: "winter-aab3a.firebasestorage.app",
+        messagingSenderId: "46516471666",
+        appId: "1:46516471666:web:113f81a88048b0bd1a7feb",
+        measurementId: "G-V4QQHXR218",
+      };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
 
-    const startDate = new Date('2026-01-19');
-    const endDate = new Date('2026-02-22');
-    const cnyStart = new Date('2026-02-11');
-    const cnyEnd = new Date('2026-02-20');
+      const startDate = new Date("2026-01-19");
+      const endDate = new Date("2026-02-22");
+      const cnyStart = new Date("2026-02-11");
+      const cnyEnd = new Date("2026-02-20");
+      const submissionDeadline = new Date("2025-12-21T23:59:59");
 
-    // 初始化表單
-    function initForm() {
-        const container = document.getElementById('schedule-container');
+      function isPastDeadline() {
+        return new Date() >= submissionDeadline;
+      }
+
+      function show404Page() {
+        document.title = "404 Not Found";
+        document.body.innerHTML = `
+          <div class="d-flex flex-column align-items-center justify-content-center min-vh-100 bg-light text-center p-4">
+            <div class="display-3 fw-bold text-muted mb-2">404</div>
+            <div class="h4 fw-bold mb-3">找不到頁面</div>
+            <p class="text-muted mb-4">填寫已於 12/21 23:59 截止，頁面目前不可用。</p>
+            <a class="btn btn-secondary px-4 rounded-pill" href="javascript:history.back()">返回上一頁</a>
+          </div>
+        `;
+      }
+
+      function scheduleDeadlineGuard() {
+        if (isPastDeadline()) {
+          show404Page();
+          return false;
+        }
+        const msToDeadline = submissionDeadline.getTime() - Date.now();
+        setTimeout(show404Page, msToDeadline);
+        return true;
+      }
+
+      // 初始化表單
+      function initForm() {
+        const container = document.getElementById("schedule-container");
         let currentDate = new Date(startDate);
-        
+
         while (currentDate <= endDate) {
-            const dateStr = currentDate.toISOString().split('T')[0];
-            const month = currentDate.getMonth() + 1;
-            const day = currentDate.getDate();
-            const weekDay = currentDate.getDay(); 
-            const weekDaysStr = ['日','一','二','三','四','五','六'];
-            
-            const isWeekend = (weekDay === 0 || weekDay === 6);
-            const isCNY = (currentDate >= cnyStart && currentDate <= cnyEnd);
-            
-            let defaultStartTime = isWeekend ? "09:00" : "13:00";
-            let defaultEndTime = "23:00";
-            const disabledAttr = isCNY ? 'disabled' : '';
-            
-            let rowClass = '';
-            let labelExtra = '';
-            if (isCNY) {
-                rowClass = 'row-cny'; 
-                labelExtra = '<span class="cny-badge">🧧 過年公休</span>';
-            } else if (isWeekend) {
-                rowClass = 'row-weekend';
-                labelExtra = '<span class="badge text-secondary border ms-2">假日</span>';
-            }
+          const dateStr = currentDate.toISOString().split("T")[0];
+          const month = currentDate.getMonth() + 1;
+          const day = currentDate.getDate();
+          const weekDay = currentDate.getDay();
+          const weekDaysStr = ["日", "一", "二", "三", "四", "五", "六"];
 
-            const startOptions = generateTimeOptions(defaultStartTime);
-            const endOptions = generateTimeOptions(defaultEndTime);
+          const isWeekend = weekDay === 0 || weekDay === 6;
+          const isCNY = currentDate >= cnyStart && currentDate <= cnyEnd;
 
-            const rowHtml = `
+          let defaultStartTime = isWeekend ? "09:00" : "13:00";
+          let defaultEndTime = "23:00";
+          const disabledAttr = isCNY ? "disabled" : "";
+
+          let rowClass = "";
+          let labelExtra = "";
+          if (isCNY) {
+            rowClass = "row-cny";
+            labelExtra = '<span class="cny-badge">🧧 過年公休</span>';
+          } else if (isWeekend) {
+            rowClass = "row-weekend";
+            labelExtra =
+              '<span class="badge text-secondary border ms-2">假日</span>';
+          }
+
+          const startOptions = generateTimeOptions(defaultStartTime);
+          const endOptions = generateTimeOptions(defaultEndTime);
+
+          const rowHtml = `
                 <div class="row date-row align-items-center ${rowClass}">
                     <div class="col-12 col-md-4 d-flex align-items-center mb-2 mb-md-0">
                         <div class="form-check mb-0">
@@ -199,72 +304,91 @@
                     </div>
                 </div>
             `;
-            container.insertAdjacentHTML('beforeend', rowHtml);
-            currentDate.setDate(currentDate.getDate() + 1);
+          container.insertAdjacentHTML("beforeend", rowHtml);
+          currentDate.setDate(currentDate.getDate() + 1);
         }
-    }
+      }
 
-    function generateTimeOptions(sel) {
-        let h = '';
+      function generateTimeOptions(sel) {
+        let h = "";
         for (let i = 8; i <= 24; i++) {
-            let hr = i < 10 ? `0${i}` : i;
-            let t = `${hr}:00`; if (i===24) t="00:00 (隔日)";
-            h += `<option value="${t}" ${t.startsWith(sel)?'selected':''}>${t}</option>`;
-            if (i!==24) { let ht=`${hr}:30`; h+=`<option value="${ht}" ${ht===sel?'selected':''}>${ht}</option>`; }
+          let hr = i < 10 ? `0${i}` : i;
+          let t = `${hr}:00`;
+          if (i === 24) t = "00:00 (隔日)";
+          h += `<option value="${t}" ${
+            t.startsWith(sel) ? "selected" : ""
+          }>${t}</option>`;
+          if (i !== 24) {
+            let ht = `${hr}:30`;
+            h += `<option value="${ht}" ${
+              ht === sel ? "selected" : ""
+            }>${ht}</option>`;
+          }
         }
         return h;
-    }
+      }
 
-    window.toggleInputs = function(chk) {
-        const p = chk.closest('.row');
-        p.querySelectorAll('select').forEach(s => s.disabled = !chk.checked);
-    }
+      window.toggleInputs = function (chk) {
+        const p = chk.closest(".row");
+        p.querySelectorAll("select").forEach(
+          (s) => (s.disabled = !chk.checked)
+        );
+      };
 
-    window.submitData = async function() {
-        const name = document.getElementById('username').value.trim();
-        const remarks = document.getElementById('remarks').value.trim();
-        
-        if (!name) { alert('請填寫姓名！'); return; }
-        
+      window.submitData = async function () {
+        if (isPastDeadline()) {
+          alert("表單已於 12/21 23:59 截止，無法再填寫或送出。");
+          return;
+        }
+
+        const name = document.getElementById("username").value.trim();
+        const remarks = document.getElementById("remarks").value.trim();
+
+        if (!name) {
+          alert("請填寫姓名！");
+          return;
+        }
+
         const availability = [];
-        document.querySelectorAll('.date-row').forEach(row => {
-            const chk = row.querySelector('.is-available');
-            if (chk.checked && !chk.disabled) {
-                availability.push({
-                    date: row.querySelector('.date-val').value,
-                    startTime: row.querySelector('.start-time').value,
-                    endTime: row.querySelector('.end-time').value
-                });
-            }
+        document.querySelectorAll(".date-row").forEach((row) => {
+          const chk = row.querySelector(".is-available");
+          if (chk.checked && !chk.disabled) {
+            availability.push({
+              date: row.querySelector(".date-val").value,
+              startTime: row.querySelector(".start-time").value,
+              endTime: row.querySelector(".end-time").value,
+            });
+          }
         });
 
         if (availability.length === 0) {
-            if(!confirm('目前未勾選任何日期，確定要送出空白班表嗎？')) return;
+          if (!confirm("目前未勾選任何日期，確定要送出空白班表嗎？")) return;
         }
 
-        const load = document.getElementById('loading');
-        load.style.display = 'block';
+        const load = document.getElementById("loading");
+        load.style.display = "block";
 
         try {
-            await addDoc(collection(db, "schedules"), { 
-                name: name, 
-                availability: availability, 
-                remarks: remarks, 
-                submittedAt: serverTimestamp() 
-            });
-            alert('✅ 送出成功！感謝你的填寫。');
-            location.reload(); 
-        } catch (e) { 
-            console.error(e); 
-            alert('❌ 發生錯誤，請稍後再試：' + e.message); 
-        } finally { 
-            load.style.display = 'none'; 
+          await addDoc(collection(db, "schedules"), {
+            name: name,
+            availability: availability,
+            remarks: remarks,
+            submittedAt: serverTimestamp(),
+          });
+          alert("✅ 送出成功！感謝你的填寫。");
+          location.reload();
+        } catch (e) {
+          console.error(e);
+          alert("❌ 發生錯誤，請稍後再試：" + e.message);
+        } finally {
+          load.style.display = "none";
         }
-    }
+      };
 
-    // 啟動程式
-    initForm();
-</script>
-
-</body>
+      // 啟動程式
+      if (scheduleDeadlineGuard()) {
+        initForm();
+      }
+    </script>
+  </body>
 </html>
